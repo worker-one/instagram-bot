@@ -9,10 +9,9 @@ from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
-from .chatgpt.handlers import register_handlers as chatgpt_handlers
 from .database.core import SessionLocal, create_tables, drop_tables
-from .google_sheets.handlers import register_handlers as google_sheets_handlers
-from .items.data import init_item_categories_table
+#from .google_sheets.handlers import register_handlers as google_sheets_handlers
+from .instagram.handlers import register_handlers as instagram_handlers
 from .items.handlers import register_handlers as items_handlers
 from .menu.handlers import register_handlers as menu_handlers
 from .middleware.antiflood import AntifloodMiddleware
@@ -20,7 +19,9 @@ from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
 from .users.handlers import register_handlers as users_handlers
-from .yt_dlp.handlers import register_handlers as ydl_handlers
+from .common.handlers import register_handlers as common_handlers
+from .help.handlers import register_handlers as help_handlers
+from .scheduler.service import init_scheduler
 
 # Set up logging
 logger = logging.getLogger(__name__)
@@ -85,13 +86,14 @@ def _register_handlers(bot):
     """Register all bot handlers."""
     handlers = [
         admin_handlers,
-        chatgpt_handlers,
         menu_handlers,
-        google_sheets_handlers,
+        #google_sheets_handlers,
+        instagram_handlers,
         public_message_handlers,
-        ydl_handlers,
         users_handlers,
         items_handlers,
+        common_handlers,
+        help_handlers
     ]
     for handler in handlers:
         handler(bot)
@@ -118,14 +120,14 @@ def init_db():
         init_superuser(db_session, SUPERUSER_USER_ID, SUPERUSER_USERNAME)
         logger.info(f"Superuser {SUPERUSER_USERNAME} added successfully.")
 
-    init_item_categories_table(db_session)
-
     db_session.close()
 
     logger.info("Database initialized")
 
 
 if __name__ == "__main__":
-    drop_tables()
-    init_db()
+#    drop_tables()
+#    init_db()
+    init_scheduler()
+    logger.info("Starting Telegram bot...")
     start_bot()

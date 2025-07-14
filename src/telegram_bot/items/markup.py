@@ -5,7 +5,7 @@ from pathlib import Path
 from omegaconf import OmegaConf
 from telebot.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from .models import Item
+from .models import InstagramAccount
 
 # Load configuration
 CURRENT_DIR = Path(__file__).parent
@@ -20,60 +20,56 @@ logging.basicConfig(
 )
 
 
-def create_items_menu_markup(lang: str) -> InlineKeyboardMarkup:
-    """Create the items menu markup"""
+def create_instagram_accounts_menu_markup(lang: str) -> InlineKeyboardMarkup:
+    """Create the Instagram accounts menu markup"""
     markup = InlineKeyboardMarkup()
     markup.add(
-        InlineKeyboardButton(strings[lang].create_item, callback_data="create_item")
+        InlineKeyboardButton(strings[lang].add_account, callback_data="add_account")
     )
-    markup.add(InlineKeyboardButton(strings[lang].my_items, callback_data="my_items"))
+    markup.add(InlineKeyboardButton(strings[lang].list_my_accounts, callback_data="my_accounts"))
     markup.add(InlineKeyboardButton(strings[lang].back_to_menu, callback_data="menu"))
     return markup
 
 
-def create_item_menu_markup(lang: str, item_id: int) -> InlineKeyboardMarkup:
-    """Create the item menu markup"""
+def create_instagram_account_menu_markup(lang: str, account_id: int) -> InlineKeyboardMarkup:
+    """Create the Instagram account menu markup"""
     markup = InlineKeyboardMarkup()
     markup.add(
         InlineKeyboardButton(
-            strings[lang].delete_item, callback_data=f"delete_item_{item_id}"
+            strings[lang].remove_account, callback_data=f"remove_account_{account_id}"
         )
     )
     markup.add(
-        InlineKeyboardButton(strings[lang].back_to_items, callback_data="my_items")
+        InlineKeyboardButton(strings[lang].back_to_accounts, callback_data="my_accounts")
     )
     markup.add(InlineKeyboardButton(strings[lang].back_to_menu, callback_data="menu"))
     return markup
 
 
-def create_items_list_markup(lang: str, items: list[Item]) -> InlineKeyboardMarkup:
-    """Create the items menu markup"""
+def create_instagram_accounts_list_markup(lang: str, accounts: list[InstagramAccount]) -> InlineKeyboardMarkup:
+    """Create the Instagram accounts list markup"""
     markup = InlineKeyboardMarkup()
-    for item in items:
+    for account in accounts:
         markup.add(
-            InlineKeyboardButton(item.name, callback_data=f"view_item_{item.id}")
+            InlineKeyboardButton(f"@{account.username}", callback_data=f"view_account_{account.id}")
         )
 
     markup.add(InlineKeyboardButton(strings[lang].back_to_menu, callback_data="menu"))
-    return markup
-
-
-def create_categories_list_markup(
-    lang: str, categories: list[str]
-) -> InlineKeyboardMarkup:
-    """Create the categories list markup"""
-    markup = InlineKeyboardMarkup()
-    for category in categories:
-        markup.add(
-            InlineKeyboardButton(category.name, callback_data=f"category_{category.id}")
-        )
     return markup
 
 
 def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
-    """Create a cancel button for the items menu"""
+    """Create a cancel button for the Instagram accounts menu"""
     cancel_button = InlineKeyboardMarkup(row_width=1)
     cancel_button.add(
-        InlineKeyboardButton(strings[lang].cancel, callback_data="item"),
+        InlineKeyboardButton(strings[lang].cancel, callback_data="instagram_accounts"),
+    )
+    return cancel_button
+
+def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
+    """Create a cancel button for the Instagram accounts menu"""
+    cancel_button = InlineKeyboardMarkup(row_width=1)
+    cancel_button.add(
+        InlineKeyboardButton(strings[lang].cancel, callback_data="instagram_accounts"),
     )
     return cancel_button

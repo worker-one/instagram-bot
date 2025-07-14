@@ -1,6 +1,5 @@
 import csv
 import logging
-
 import os
 
 from dotenv import find_dotenv, load_dotenv
@@ -30,7 +29,7 @@ if not all([DB_HOST, DB_NAME, DB_USER, DB_PASSWORD]):
     logger.warning(
         "One or more postgresql database environment variables are not set. Using SQLite instead."
     )
-    DATABASE_URL = "sqlite:///local_database.db"
+    DATABASE_URL = "sqlite:///instagram-bot.db"
 else:
     # Construct the database URL for PostgreSQL
     DATABASE_URL = f"postgresql://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode=require"

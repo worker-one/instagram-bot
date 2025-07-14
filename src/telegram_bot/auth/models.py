@@ -32,4 +32,5 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
 
     role = relationship("Role", backref="users", lazy="joined")
-    items = relationship("Item", back_populates="owner")
+    instagram_accounts = relationship("InstagramAccount", back_populates="owner")
+    sent_reels = relationship("SentReel", back_populates="user")

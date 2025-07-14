@@ -1,0 +1,4 @@
+strings:
+  ru:
+    cancel: "Отмена"
+    cancelled: "Отменено"

@@ -1,18 +1,14 @@
 strings:
   ru:
     main_menu:
-      title: "Главное меню"
+      title: "👋 Привет! Я помогу тебе отслеживать тренды в Instagram!"
       options:
-        - label: "ChatGPT"
-          value: "chatgpt"
-        - label: "Скачать видео с YouTube"
-          value: "yt_dlp"
-        - label: "Загрузить файл на Google Drive"
-          value: "google_drive"
-        - label: "Google Sheets"
-          value: "google_sheets"
-        - label: "Мои записи"
-          value: "item"
+        - label: "📜 Мои аккаунты"
+          value: "instagram_accounts"
+        - label: "⚙️ Настройки"
+          value: "settings"
+        - label: "ℹ️ Помощь"
+          value: "help"
     admin_menu:
       title: "Меню администратора"
       options:
