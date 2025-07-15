@@ -6,6 +6,7 @@ from omegaconf import OmegaConf
 from telebot import TeleBot, types
 from telebot.states import State, StatesGroup
 
+from ..instagram.utils import sanitize_instagram_input
 from ..menu.markup import create_menu_markup
 from .markup import (
     create_cancel_button,
@@ -19,7 +20,6 @@ from .service import (
     read_instagram_account,
     read_instagram_accounts,
 )
-from ..instagram.utils import sanitize_instagram_input
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -112,23 +112,30 @@ def register_handlers(bot: TeleBot) -> None:
             reply_markup=create_menu_markup(user.lang),
         )
 
-    @bot.callback_query_handler(func=lambda call: call.data == "my_accounts")
+    @bot.callback_query_handler(func=lambda call: call.data == "my_accounts" or call.data.startswith("my_accounts_page_"))
     def show_my_accounts(call: types.CallbackQuery, data: Dict[str, Any]) -> None:
         """
-        Display the user's Instagram accounts.
-
-        Args:
-            call: The callback query
-            data: The data dictionary containing user and database session
+        Display the user's Instagram accounts with pagination.
         """
         user = data["user"]
         db_session = data["db_session"]
         data["state"].set(InstagramAccountState.my_accounts)
 
-        # Get all accounts and filter by current user
-        accounts = read_instagram_accounts(db_session)
-        user_accounts = [account for account in accounts if account.owner_id == user.id]
+        # Pagination
+        accounts_per_page = 5
+        if call.data.startswith("my_accounts_page_"):
+            page = int(call.data.split("_")[-1])
+        else:
+            page = 1
 
+        # Get all accounts and filter by current user, sort alphabetically
+        accounts = read_instagram_accounts(db_session)
+        user_accounts = sorted(
+            [account for account in accounts if account.owner_id == user.id],
+            key=lambda acc: acc.username.lower()
+        )
+
+        total_accounts = len(user_accounts)
         if not user_accounts:
             # Show empty state with back button
             markup = types.InlineKeyboardMarkup()
@@ -137,7 +144,6 @@ def register_handlers(bot: TeleBot) -> None:
                     strings[user.lang].back_to_menu, callback_data="menu"
                 )
             )
-
             bot.edit_message_text(
                 chat_id=user.id,
                 message_id=call.message.message_id,
@@ -146,10 +152,30 @@ def register_handlers(bot: TeleBot) -> None:
             )
             return
 
-        # Show list of user's accounts
-        markup = create_instagram_accounts_list_markup(user.lang, user_accounts)
-        bot.send_message(
-            chat_id=user.id, text=strings[user.lang].your_accounts, reply_markup=markup
+        # Pagination logic
+        start = (page - 1) * accounts_per_page
+        end = start + accounts_per_page
+        page_accounts = user_accounts[start:end]
+
+        markup = create_instagram_accounts_list_markup(user.lang, page_accounts)
+
+        # Add pagination buttons
+        nav_markup = types.InlineKeyboardMarkup()
+        if page > 1:
+            nav_markup.add(types.InlineKeyboardButton("⬅️", callback_data=f"my_accounts_page_{page-1}"))
+        if end < total_accounts:
+            nav_markup.add(types.InlineKeyboardButton("➡️", callback_data=f"my_accounts_page_{page+1}"))
+        # Merge nav_markup into markup
+        for row in nav_markup.keyboard:
+            markup.keyboard.append(row)
+
+        markup.add(types.InlineKeyboardButton(strings[user.lang].back_to_menu, callback_data="menu"))
+
+        bot.edit_message_text(
+            chat_id=user.id,
+            message_id=call.message.message_id,
+            text=strings[user.lang].your_accounts,
+            reply_markup=markup,
         )
 
     @bot.callback_query_handler(func=lambda call: call.data.startswith("view_account_"))
@@ -196,29 +222,59 @@ def register_handlers(bot: TeleBot) -> None:
     def process_username(message: types.Message, data: Dict[str, Any]) -> None:
         """
         Process the Instagram username input and complete account addition.
-
-        Args:
-            message: The message containing the username
-            data: The data dictionary containing user, database session and state
+        Now supports multiple usernames separated by newlines and enforces account limit.
         """
         user = data["user"]
         db_session = data["db_session"]
-        username = sanitize_instagram_input(message.text.strip())
+        # Split input by newlines, strip, filter empty, sanitize each
+        usernames = [
+            sanitize_instagram_input(line.strip())
+            for line in message.text.splitlines()
+            if line.strip()
+        ]
 
-        # Create the account
-        account = create_instagram_account(
-            db_session,
-            username=username,
-            owner_id=message.from_user.id,
-        )
+        # Get current accounts count for user
+        accounts = read_instagram_accounts(db_session)
+        user_accounts = [account for account in accounts if account.owner_id == user.id]
+        accounts_limit = config.app.accounts_limit
+
+        # Check if adding would exceed limit
+        if len(user_accounts) + len(usernames) > accounts_limit:
+            bot.send_message(
+                user.id,
+                strings[user.lang].limit_reached.format(limit=accounts_limit),
+                reply_markup=create_menu_markup(user.lang),
+            )
+            data["state"].delete()
+            return
+
+        added_accounts = []
+        for username in usernames:
+            # Avoid duplicates in DB for this user
+            if any(acc.username.lower() == username.lower() for acc in user_accounts + added_accounts):
+                continue
+            account = create_instagram_account(
+                db_session,
+                username=username,
+                owner_id=message.from_user.id,
+            )
+            added_accounts.append(account)
 
         # Confirm account addition
-        bot.send_message(
-            user.id,
-            strings[user.lang].account_added.format(username=account.username),
-            reply_markup=create_menu_markup(user.lang),
-            parse_mode="Markdown",
-        )
+        if added_accounts:
+            usernames_str = ", ".join(f"@{acc.username}" for acc in added_accounts)
+            bot.send_message(
+                user.id,
+                strings[user.lang].account_added.format(username=usernames_str),
+                reply_markup=create_menu_markup(user.lang),
+                parse_mode="Markdown",
+            )
+        else:
+            bot.send_message(
+                user.id,
+                strings[user.lang].operation_cancelled,
+                reply_markup=create_menu_markup(user.lang),
+            )
 
         # Clear the state
         data["state"].delete()

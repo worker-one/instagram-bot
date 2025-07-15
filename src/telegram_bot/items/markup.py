@@ -47,24 +47,14 @@ def create_instagram_account_menu_markup(lang: str, account_id: int) -> InlineKe
 
 
 def create_instagram_accounts_list_markup(lang: str, accounts: list[InstagramAccount]) -> InlineKeyboardMarkup:
-    """Create the Instagram accounts list markup"""
+    """Create the Instagram accounts list markup (no back/menu buttons here, handled in handler)."""
     markup = InlineKeyboardMarkup()
     for account in accounts:
         markup.add(
             InlineKeyboardButton(f"@{account.username}", callback_data=f"view_account_{account.id}")
         )
-
-    markup.add(InlineKeyboardButton(strings[lang].back_to_menu, callback_data="menu"))
     return markup
 
-
-def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
-    """Create a cancel button for the Instagram accounts menu"""
-    cancel_button = InlineKeyboardMarkup(row_width=1)
-    cancel_button.add(
-        InlineKeyboardButton(strings[lang].cancel, callback_data="instagram_accounts"),
-    )
-    return cancel_button
 
 def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
     """Create a cancel button for the Instagram accounts menu"""

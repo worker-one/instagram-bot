@@ -5,8 +5,8 @@ strings:
       options:
         - label: "📜 Мои аккаунты"
           value: "instagram_accounts"
-        - label: "⚙️ Настройки"
-          value: "settings"
+        # - label: "⚙️ Настройки"
+        #   value: "settings"
         - label: "ℹ️ Помощь"
           value: "help"
     admin_menu:

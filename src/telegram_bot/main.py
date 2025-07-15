@@ -126,8 +126,8 @@ def init_db():
 
 
 if __name__ == "__main__":
-#    drop_tables()
-#    init_db()
+    drop_tables()
+    init_db()
     init_scheduler()
     logger.info("Starting Telegram bot...")
     start_bot()
