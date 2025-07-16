@@ -26,6 +26,7 @@ strings:
     cancel: "Cancel"
   ru:
     add_account: ➕ Добавить аккаунт
+    add_another_account: ➕ Добавить другой аккаунт
     remove_account: "🗑️ Удалить аккаунт"
     operation_cancelled: "Операция отменена"
     my_accounts: 📜 Мои аккаунты

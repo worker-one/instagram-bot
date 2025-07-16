@@ -210,6 +210,16 @@ def analyze_account_trends(reels: list, user_info: dict) -> list:
         
         is_trending = False
         
+        # Posted last 14 days
+        if reel.get('post_date'):
+            try:
+                post_date = datetime.fromisoformat(reel['post_date'].replace('Z', '+00:00'))
+                if (datetime.now(timezone.utc) - post_date).days > 14:
+                    continue
+            except ValueError:
+                logger.warning(f"Invalid post date format for reel {reel['link']}")
+                continue
+        
         # High engagement rate
         if engagement_rate > 0.05:
             is_trending = True

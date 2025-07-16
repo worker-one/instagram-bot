@@ -55,6 +55,15 @@ def create_instagram_accounts_list_markup(lang: str, accounts: list[InstagramAcc
         )
     return markup
 
+def add_another_account_button(lang: str) -> InlineKeyboardMarkup:
+    """Create a button to add another Instagram account"""
+    markup = InlineKeyboardMarkup(row_width=1)
+    markup.add(
+        InlineKeyboardButton(strings[lang].add_another_account, callback_data="add_account"),
+        InlineKeyboardButton(strings[lang].back_to_menu, callback_data="menu")
+    )
+    return markup
+
 
 def create_cancel_button(lang: str) -> InlineKeyboardMarkup:
     """Create a cancel button for the Instagram accounts menu"""

@@ -1,20 +1,20 @@
 import logging
+import os
 from pathlib import Path
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 from omegaconf import OmegaConf
 from telebot import TeleBot
-import os
 
 from ..database.core import get_db
-from ..items.service import (
-    get_all_instagram_accounts_with_owners, 
-    analyze_account_trends,
-    filter_unsent_reels,
-    record_sent_reel,
-    cleanup_old_sent_reels
-)
 from ..instagram.service import InstagramWrapper
+from ..items.service import (
+    analyze_account_trends,
+    cleanup_old_sent_reels,
+    filter_unsent_reels,
+    get_all_instagram_accounts_with_owners,
+    record_sent_reel,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -124,11 +124,14 @@ def send_user_notifications(user, trending_content: List[Dict[str, Any]], db_ses
     try:
         # Get user's language
         lang = getattr(user, 'lang', 'en')
-        
+
         # Send title message
+        if len(trending_content) == 0:
+            bot.send_message(user.id, strings[lang].notification.no_new_trends)
+            return
         title = strings[lang].notification.title
         bot.send_message(user.id, title)
-        
+
         # Send each trending item and record it
         sent_count = 0
         for item in trending_content[:5]:  # Limit to 5 trending items
@@ -142,17 +145,16 @@ def send_user_notifications(user, trending_content: List[Dict[str, Any]], db_ses
                 followers=item['followers'],
                 trend_category=item['trend_category']
             )
-            
+
             # Send message
             bot.send_message(user.id, message, parse_mode='Markdown')
-            
+
             # Record that this reel was sent
-            if record_sent_reel(db_session, user.id, item['video_url'], item['account_name']):
-                sent_count += 1
-        
-        if sent_count == 0:
-            bot.send_message(user.id, strings[lang].notification.no_new_trends)
+            record_sent_reel(db_session, user.id, item['video_url'], item['account_name'])
+
+            sent_count += 1
+
         logger.info(f"Sent {sent_count} new notifications to user {user.id}")
-        
+
     except Exception as e:
         logger.error(f"Error sending notifications to user {user.id}: {e}")
