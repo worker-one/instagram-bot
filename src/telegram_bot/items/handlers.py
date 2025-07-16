@@ -9,6 +9,7 @@ from telebot.states import State, StatesGroup
 from ..instagram.utils import sanitize_instagram_input
 from ..menu.markup import create_menu_markup
 from .markup import (
+    add_another_account_button,
     create_cancel_button,
     create_instagram_account_menu_markup,
     create_instagram_accounts_list_markup,
@@ -266,7 +267,7 @@ def register_handlers(bot: TeleBot) -> None:
             bot.send_message(
                 user.id,
                 strings[user.lang].account_added.format(username=usernames_str),
-                reply_markup=create_menu_markup(user.lang),
+                reply_markup=add_another_account_button(user.lang),
                 parse_mode="Markdown",
             )
         else:
