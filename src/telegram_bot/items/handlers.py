@@ -123,7 +123,7 @@ def register_handlers(bot: TeleBot) -> None:
         data["state"].set(InstagramAccountState.my_accounts)
 
         # Pagination
-        accounts_per_page = 5
+        accounts_per_page = 10
         if call.data.startswith("my_accounts_page_"):
             page = int(call.data.split("_")[-1])
         else:

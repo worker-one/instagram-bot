@@ -50,7 +50,7 @@ def read_instagram_accounts_by_owner(
     )
 
 
-def read_instagram_accounts(db_session: Session, skip: int = 0, limit: int = 10):
+def read_instagram_accounts(db_session: Session, skip: int = 0, limit: int = 100):
     """Get all Instagram accounts"""
     return db_session.query(InstagramAccount).offset(skip).limit(limit).all()
 
