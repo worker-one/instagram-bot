@@ -9,7 +9,7 @@ from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
-from .database.core import SessionLocal, create_tables, drop_tables
+from .database.core import SessionLocal, create_tables
 #from .google_sheets.handlers import register_handlers as google_sheets_handlers
 from .instagram.handlers import register_handlers as instagram_handlers
 from .items.handlers import register_handlers as items_handlers

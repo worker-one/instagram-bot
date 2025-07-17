@@ -57,10 +57,10 @@ def init_scheduler():
         scheduler.add_job(
             send_trend_notifications,
             'interval',
-            minutes=2,
+            minutes=200,
             id='trend_notifications',
             replace_existing=True
         )
-        logger.info("Trend notifications scheduled to run every 270 minutes")
+        logger.info("Trend notifications scheduled to run every 200 minutes")
 
 # TODO: create tasks for push notifications, reminders, etc.
