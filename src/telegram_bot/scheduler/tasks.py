@@ -109,8 +109,7 @@ def send_trend_notifications():
             unsent_trending_content = filter_unsent_reels(db_session, user.id, trending_content)
             
             # Send notifications if unsent trending content found
-            if unsent_trending_content:
-                send_user_notifications(user, unsent_trending_content, db_session)
+            send_user_notifications(user, unsent_trending_content, db_session)
                 
         db_session.close()
         logger.info("Trend notifications task completed")

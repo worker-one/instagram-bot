@@ -216,7 +216,7 @@ def register_handlers(bot: TeleBot) -> None:
             message_id=call.message.message_id,
             text=message_text,
             reply_markup=markup,
-            parse_mode="Markdown",
+            parse_mode="HTML",
         )
 
     @bot.message_handler(state=InstagramAccountState.username)
@@ -253,6 +253,10 @@ def register_handlers(bot: TeleBot) -> None:
         for username in usernames:
             # Avoid duplicates in DB for this user
             if any(acc.username.lower() == username.lower() for acc in user_accounts + added_accounts):
+                bot.send_message(
+                    user.id,
+                    strings[user.lang].account_already_exists.format(username=username),
+                )
                 continue
             account = create_instagram_account(
                 db_session,
@@ -267,13 +271,12 @@ def register_handlers(bot: TeleBot) -> None:
             bot.send_message(
                 user.id,
                 strings[user.lang].account_added.format(username=usernames_str),
-                reply_markup=add_another_account_button(user.lang),
-                parse_mode="Markdown",
+                reply_markup=add_another_account_button(user.lang)
             )
         else:
             bot.send_message(
                 user.id,
-                strings[user.lang].operation_cancelled,
+                strings[user.lang].no_new_accounts,
                 reply_markup=create_menu_markup(user.lang),
             )
 

@@ -13,12 +13,13 @@ strings:
     no_accounts: "You don't have any Instagram accounts to follow yet."
     back_to_accounts: "Back to my accounts"
     account_not_found: "Account not found"
-    account_details: "*Account Details*\n\nUsername: @{username}\nAdded: {created_at}"
+    account_details: "<b>Account Details</b>\n\nUsername: @{username}\nAdded: {created_at}"
 
     enter_username: "Enter Instagram username (without @):"
     account_added: "Instagram account(s) {username} was successfully added to your follow list."
+    no_new_accounts: "No new accounts to add."
     account_removed: "Instagram account was successfully removed from your follow list."
-
+    account_already_exists: "This account has already been added: @{username}."
     limit_reached: "You have reached the limit of {limit} Instagram accounts. Please remove an account before adding a new one."
 
     main_menu: "Main Menu"
@@ -29,6 +30,7 @@ strings:
     add_another_account: ➕ Добавить другой аккаунт
     remove_account: "🗑️ Удалить аккаунт"
     operation_cancelled: "Операция отменена"
+    no_new_accounts: "Нет новых аккаунтов для добавления."
     my_accounts: 📜 Мои аккаунты
     list_my_accounts: "📜 Список моих аккаунтов"
     back_to_menu: "Вернуться в главное меню"
@@ -37,13 +39,13 @@ strings:
     no_accounts: "У тебя пока нет аккаунтов для отслеживания."
     back_to_accounts: "Вернуться к моим подпискам"
     account_not_found: "Аккаунт не найден"
-    account_details: "*Детали аккаунта*\n\nИмя пользователя: @{username}\nДобавлено: {created_at}"
+    account_details: "<b>Детали аккаунта</b>\n\nИмя пользователя: @{username}\nДобавлено: {created_at}"
 
     enter_username: ✍️ Введите имя аккаунта или ссылку на него в Instagram. Ты можешь указать несколько аккаунтов, разделяя их новой строкой.
     account_added_confirmation: "✅ Аккаунт успешно добавлен! @{username} добавлен в список для отслеживания."
     account_added: "✅ Аккаунт(ы) успешно добавлен(ы)! {username} добавлен(ы) в список для отслеживания."
     account_removed: "Instagram аккаунт был успешно удален из списка для отслеживания."
-
+    account_already_exists: "Этот аккаунт уже был добавлен: @{username}."
     limit_reached: "🚫 Ты достиг лимита в {limit} Instagram аккаунтов. Пожалуйста, удали один из них перед добавлением нового."
 
     main_menu: "Главное меню"

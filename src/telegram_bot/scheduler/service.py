@@ -57,7 +57,7 @@ def init_scheduler():
         scheduler.add_job(
             send_trend_notifications,
             'interval',
-            minutes=270,
+            minutes=2,
             id='trend_notifications',
             replace_existing=True
         )
