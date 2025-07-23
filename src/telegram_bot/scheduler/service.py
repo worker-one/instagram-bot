@@ -62,5 +62,3 @@ def init_scheduler():
             replace_existing=True
         )
         logger.info("Trend notifications scheduled to run every 200 minutes")
-
-# TODO: create tasks for push notifications, reminders, etc.

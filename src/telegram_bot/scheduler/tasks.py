@@ -93,27 +93,26 @@ def send_trend_notifications():
                     if reels_result['status'] != 200:
                         logger.warning(f"Could not fetch reels for {account.username}")
                         continue
-                        
+
                     reels = reels_result['data']
-                    
+
                     # Analyze for trending content
                     trends = analyze_account_trends(reels, user_info)
                     if trends:
                         trending_content.extend(trends)
-                        
+
                 except Exception as e:
                     logger.error(f"Error processing account {account.username}: {e}")
                     continue
-            
+
             # Filter out already sent reels
             unsent_trending_content = filter_unsent_reels(db_session, user.id, trending_content)
-            
             # Send notifications if unsent trending content found
             send_user_notifications(user, unsent_trending_content, db_session)
-                
+
         db_session.close()
         logger.info("Trend notifications task completed")
-        
+
     except Exception as e:
         logger.error(f"Error in trend notifications task: {e}")
 
@@ -126,6 +125,7 @@ def send_user_notifications(user, trending_content: List[Dict[str, Any]], db_ses
 
         # Send title message
         if len(trending_content) == 0:
+            logger.info(f"No new trends for user {user.id}")
             bot.send_message(user.id, strings[lang].notification.no_new_trends)
             return
         title = strings[lang].notification.title
