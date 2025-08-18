@@ -9,7 +9,10 @@ from telebot.states.sync.middleware import StateMiddleware
 
 from .admin.handlers import register_handlers as admin_handlers
 from .auth.data import init_roles_table, init_superuser
+from .common.handlers import register_handlers as common_handlers
 from .database.core import SessionLocal, create_tables
+from .help.handlers import register_handlers as help_handlers
+
 #from .google_sheets.handlers import register_handlers as google_sheets_handlers
 from .instagram.handlers import register_handlers as instagram_handlers
 from .items.handlers import register_handlers as items_handlers
@@ -18,10 +21,8 @@ from .middleware.antiflood import AntifloodMiddleware
 from .middleware.database import DatabaseMiddleware
 from .middleware.user import UserCallbackMiddleware, UserMessageMiddleware
 from .public_message.handlers import register_handlers as public_message_handlers
-from .users.handlers import register_handlers as users_handlers
-from .common.handlers import register_handlers as common_handlers
-from .help.handlers import register_handlers as help_handlers
 from .scheduler.service import init_scheduler
+from .users.handlers import register_handlers as users_handlers
 
 # Set up logging
 logger = logging.getLogger(__name__)

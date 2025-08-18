@@ -67,7 +67,7 @@ def init_scheduler():
         scheduler.add_job(
             check_balance,
             'interval',
-            minutes=4,
+            minutes=30,
             id='balance_check',
             replace_existing=True
         )

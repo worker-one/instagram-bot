@@ -78,13 +78,13 @@ def register_handlers(bot):
                 return
 
         # Send the user data
-        format_message = f"id: `{retrieved_user.id}`\nusername: `{retrieved_user.username}`\nrole: `{retrieved_user.role.name}`"
+        #format_message = f"id: `{retrieved_user.id}`\nusername: `{retrieved_user.username}`\nrole: `{retrieved_user.role.name}`"
         format_message = app_strings[user.lang].user_info_template.format(
             user_id=retrieved_user.id,
             username=retrieved_user.username,
             first_name=retrieved_user.first_name,
             last_name=retrieved_user.last_name,
-            role=retrieved_user.role.name,
+            role=retrieved_user.role_id,
             is_blocked=retrieved_user.is_blocked,
         )
 
