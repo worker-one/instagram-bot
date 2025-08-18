@@ -81,7 +81,7 @@ def register_handlers(bot):
     @bot.callback_query_handler(func=lambda call: call.data == "hikerapi_balance")
     def hikerapi_balance_handler(call: CallbackQuery, data: dict):
         balance_info = instagram_client.get_balance()
-        bot.send_message(call.from_user.id, f"```json\n{balance_info["data"]}\n```", parse_mode="Markdown")
+        bot.send_message(call.from_user.id, f'```json\n{balance_info["data"]}\n```', parse_mode="Markdown")
 
 
     @bot.message_handler(
