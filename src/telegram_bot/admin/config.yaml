@@ -10,6 +10,8 @@ strings:
           value: "public_message"
         - label: "Управление пользователями"
           value: "users"
+        - label: "Баланс Hiker API"
+          value: "hikerapi_balance"
         - label: "О приложении"
           value: "about"
   en:
@@ -23,5 +25,7 @@ strings:
           value: "public_message"
         - label: "User management"
           value: "users"
+        - label: "Hiker API Balance"
+          value: "hikerapi_balance"
         - label: "About"
           value: "about"

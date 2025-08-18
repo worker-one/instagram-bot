@@ -209,3 +209,16 @@ def upsert_user(
     finally:
         db_session.close()
     return user
+
+
+def get_admin_users(db_session: Session) -> list[User]:
+    """
+    Get all admin users.
+
+    Args:
+        db_session: The database session.
+
+    Returns:
+        A list of admin users.
+    """
+    return db_session.query(User).filter((User.role_id == 0) | (User.role_id == 1)).all()

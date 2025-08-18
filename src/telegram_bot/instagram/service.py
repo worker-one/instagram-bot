@@ -1,4 +1,6 @@
+from email.mime import application
 import json
+import httpx
 import logging
 import os
 from time import sleep
@@ -10,8 +12,19 @@ logger = logging.getLogger(__name__)
 
 class InstagramWrapper:
     def __init__(self, token: str):
+        self.token = token
         self.client = Client(token=token)
         self.use_cache = True
+
+    def get_balance(self):
+        headers = {
+            "x-access-key": self.token,
+            "accept": "application/json",
+        }
+        response = httpx.get("https://api.hikerapi.com/sys/balance", headers=headers)
+        if response.status_code == 200:
+            return {"status": 200, "data": response.json()}
+        return {"status": response.status_code, "message": response.text}
 
     def get_user_info(self, username: str):
         user = self.client.user_by_username_v1(username)

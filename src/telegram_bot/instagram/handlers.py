@@ -2,13 +2,13 @@ import logging
 import os
 from pathlib import Path
 
-from .service import InstagramWrapper
 from dotenv import find_dotenv, load_dotenv
 from omegaconf import OmegaConf
 from telebot.states import State, StatesGroup
 from telebot.types import CallbackQuery, InputMediaVideo, Message
 
 from ..common.markup import create_cancel_button, create_keyboard_markup
+from .service import InstagramWrapper
 from .utils import create_resource, sanitize_instagram_input
 
 logger = logging.getLogger(__name__)
@@ -65,7 +65,7 @@ def format_account_reel_response(
     )
     return reel_response
 
-# Handlers
+
 def register_handlers(bot):
     @bot.callback_query_handler(func=lambda call: "analyze_account" in call.data)
     def analyze_account(call: CallbackQuery, data: dict):
@@ -76,6 +76,13 @@ def register_handlers(bot):
             config.strings.enter_nickname[user.lang],
             reply_markup=create_cancel_button(user.lang)
         )
+
+
+    @bot.callback_query_handler(func=lambda call: call.data == "hikerapi_balance")
+    def hikerapi_balance_handler(call: CallbackQuery, data: dict):
+        balance_info = instagram_client.get_balance()
+        bot.send_message(call.from_user.id, f"```json\n{balance_info["data"]}\n```", parse_mode="Markdown")
+
 
     @bot.message_handler(
         commands=["analyze_account", "account"]

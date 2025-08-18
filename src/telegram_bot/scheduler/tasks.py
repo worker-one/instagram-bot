@@ -6,6 +6,7 @@ from typing import Any, Dict, List
 from omegaconf import OmegaConf
 from telebot import TeleBot
 
+from ..auth.service import get_admin_users
 from ..database.core import get_db
 from ..instagram.service import InstagramWrapper
 from ..items.service import (
@@ -44,16 +45,16 @@ def send_trend_notifications():
     if not instagram_wrapper or not bot:
         logger.error("Instagram wrapper or bot not initialized")
         return
-        
+
     logger.info("Starting trend notifications task")
-    
+
     try:
         # Get database session
         db_session = next(get_db())
-        
+
         # Clean up old sent reels (older than 30 days)
         cleanup_old_sent_reels(db_session, days_old=30)
-        
+
         # Get all Instagram accounts with their owners
         accounts_with_owners = get_all_instagram_accounts_with_owners(db_session)
         
@@ -157,3 +158,15 @@ def send_user_notifications(user, trending_content: List[Dict[str, Any]], db_ses
 
     except Exception as e:
         logger.error(f"Error sending notifications to user {user.id}: {e}")
+
+
+def check_balance():
+    # Check balance
+    balance_info = instagram_wrapper.get_balance()
+    logger.info(f"Current HIKER API balance: {balance_info}")
+    amount = balance_info['data']['amount']
+    if amount < 4:
+        # Send notification to all admin users
+        db_session = next(get_db())
+        for admin in get_admin_users(db_session):
+            bot.send_message(admin.id, f"HIKER API balance is low: {amount}")

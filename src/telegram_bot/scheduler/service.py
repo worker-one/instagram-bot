@@ -43,7 +43,7 @@ job_defaults = {
 
 scheduler = BackgroundScheduler(jobstores=jobstores, job_defaults=job_defaults)
 
-from .tasks import send_trend_notifications
+from .tasks import send_trend_notifications, check_balance
 
 # scheduler.add_job(remove_past_scheduled_games, 'cron', hour=0)  # Runs daily at midnight
 
@@ -62,3 +62,13 @@ def init_scheduler():
             replace_existing=True
         )
         logger.info("Trend notifications scheduled to run every 200 minutes")
+
+        # Schedule balance check - runs every 4 minutes
+        scheduler.add_job(
+            check_balance,
+            'interval',
+            minutes=4,
+            id='balance_check',
+            replace_existing=True
+        )
+        logger.info("Balance check scheduled to run every 4 minutes")
